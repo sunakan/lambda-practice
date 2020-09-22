@@ -17,7 +17,6 @@ GIT_IGNORE_URL  := https://www.toptal.com/developers/gitignore/api/$(IGNORE_LIST
 .PHONY: setup-gitignore
 setup-gitignore: .gitignore ## .gitignoreをsetup
 	@make --no-print-directory add-my-go-env-for-gitignore
-	@make --no-print-directory add-ytt-for-gitignore
 	@make --no-print-directory add-rq-for-gitignore
 
 .PHONY: add-my-go-env-for-gitignore

@@ -1,0 +1,26 @@
+version: '3.7'
+services:
+  dynamodb-local:
+    image: amazon/dynamodb-local:1.13.4
+    ports:
+      - 8000:8000
+
+#  go-app:
+#    image: lambda-practice/go-app
+#    build:
+#      context: .
+#      dockerfile: ./Dockerfile.go-app
+#      target: development
+#    volumes:
+#      - type: bind
+#        source: ${PWD}/app
+#        target: /root/app
+#      - type: bind
+#        source: ${PWD}/go-pkg
+#        target: /go/pkg
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 192.168.255.0/24

@@ -1,5 +1,20 @@
+= ビルド
+
+----
+$ make build
+----
+
 == クリーンアーキテクチャ
 
 出典：link:https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html[The Clean Code Blog]より引用
 
 image::https://blog.cleancoder.com/uncle-bob/images/2012-08-13-the-clean-architecture/CleanArchitecture.jpg[]
+
+=== Entity(Enterprise Business Rules)
+* XXX Model(データの定義)
+
+=== Gateways
+
+link:https://qiita.com/nrslib/items/a5f902c4defc83bd46b8#repository[Qiitaの実装クリーンアーキテクチャのRepository項目]
+
+* XXX Repository(インターフェースのみ)
