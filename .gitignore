@@ -829,3 +829,4 @@ __debug_bin
 ytt
 rq
 main
+!go.mod
