@@ -32,3 +32,32 @@ func (u *UserOperator) GetUserByID(id uint64) (*domain.UserModel, error) {
 	}
 	return &userResource.UserModel, nil
 }
+
+// CreateUser ユーザーを新規作成する
+func (u *UserOperator) CreateUser(userModel *domain.UserModel) (*domain.UserModel, error) {
+	conn, err := u.Client.ConnectDB()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	userResource := NewUserResource(userModel, u.Mapper)
+
+	tx := conn.WriteTx()
+
+	r, err := u.Mapper.BuildQueryCreate(userResource)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	uniq, err := u.UserEmailUniqGenerator.BuildQueryCreateByUser(userResource)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	err = tx.Put(r).Put(uniq).Run()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return &userResource.UserModel, nil
+}
