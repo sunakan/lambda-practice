@@ -1,5 +1,5 @@
 FROM golang:1.15-buster as development
-
+ENV LANG C.UTF-8
 RUN apt-get update --assume-yes \
   && apt-get install --assume-yes \
     git \
@@ -9,22 +9,20 @@ RUN apt-get update --assume-yes \
     openssl \
     tree
 
-RUN mkdir -p ~/.vim/colors/ \
-  && curl --location --output ~/.vim/colors/gruvbox.vim https://raw.githubusercontent.com/morhetz/gruvbox/master/colors/gruvbox.vim
-
-## LSP(Language Server Protocol)
-RUN mkdir -p ~/.vim/pack/plugins/start/ \
-  && git clone https://github.com/prabirshrestha/async.vim.git ~/.vim/pack/plugins/start/async.vim \
-  && git clone https://github.com/prabirshrestha/asyncomplete.vim.git ~/.vim/pack/plugins/start/asyncomplete.vim \
-  && git clone https://github.com/prabirshrestha/asyncomplete-lsp.vim.git ~/.vim/pack/plugins/start/asyncomplete-lsp.vim \
-  && git clone https://github.com/prabirshrestha/vim-lsp.git ~/.vim/pack/plugins/start/vim-lsp \
-  && git clone https://github.com/mattn/vim-lsp-settings.git ~/.vim/pack/plugins/start/vim-lsp-settings \
-  && git clone https://github.com/mattn/vim-lsp-icons.git ~/.vim/pack/plugins/start/vim-lsp-icons \
-  && git clone https://github.com/mattn/vim-goimports.git ~/.vim/pack/plugins/start/vim-goimports
-## Linter
-RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.31.0
-
-COPY vimrc-golang /root/.vim/vimrc
+#RUN mkdir -p ~/.vim/colors/ \
+#  && curl --location --output ~/.vim/colors/gruvbox.vim https://raw.githubusercontent.com/morhetz/gruvbox/master/colors/gruvbox.vim
+### LSP(Language Server Protocol)
+#RUN mkdir -p ~/.vim/pack/plugins/start/ \
+#  && git clone https://github.com/prabirshrestha/async.vim.git ~/.vim/pack/plugins/start/async.vim \
+#  && git clone https://github.com/prabirshrestha/asyncomplete.vim.git ~/.vim/pack/plugins/start/asyncomplete.vim \
+#  && git clone https://github.com/prabirshrestha/asyncomplete-lsp.vim.git ~/.vim/pack/plugins/start/asyncomplete-lsp.vim \
+#  && git clone https://github.com/prabirshrestha/vim-lsp.git ~/.vim/pack/plugins/start/vim-lsp \
+#  && git clone https://github.com/mattn/vim-lsp-settings.git ~/.vim/pack/plugins/start/vim-lsp-settings \
+#  && git clone https://github.com/mattn/vim-lsp-icons.git ~/.vim/pack/plugins/start/vim-lsp-icons \
+#  && git clone https://github.com/mattn/vim-goimports.git ~/.vim/pack/plugins/start/vim-goimports
+### Linter
+#RUN curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.31.0
+#COPY vimrc-golang /root/.vim/vimrc
 
 ################################################################################
 # 参考：GOPATH に(可能な限り)依存しない Go 開発環境(Go 1.15 版)
@@ -39,5 +37,3 @@ COPY vimrc-golang /root/.vim/vimrc
 #
 # 上記より、GO111MODULE=on && /${GOPATH}/pkgさえマウント出来たらイイ感じそう
 WORKDIR /root/app/
-
-ENV LANG C.UTF-8
