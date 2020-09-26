@@ -20,6 +20,10 @@ func (a *TableOperator) CreateTableForTest(schema interface{}) error {
 	return a.Client.CreateTableForTest(a.TableName, schema)
 }
 
+func (a *TableOperator) ConnectDB() (*dynamo.DB, error) {
+	return a.Client.Connect()
+}
+
 func (a *TableOperator) DropTable() error {
 	return a.Client.DropTable(a.TableName)
 }

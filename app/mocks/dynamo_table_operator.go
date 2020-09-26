@@ -1,11 +1,11 @@
 package mocks
 
 import (
+	"crypto/rand"
+	"fmt"
 	"go-app/adapter"
 	"go-app/domain"
 	"go-app/registry"
-	"crypto/rand"
-	"fmt"
 	"os"
 	"testing"
 )

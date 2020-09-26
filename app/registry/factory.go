@@ -1,12 +1,12 @@
 package registry
 
 import (
-	"go-app/usecase"
-	"go-app/interactor"
-	"go-app/domain"
-	"go-app/adapter"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
+	"go-app/adapter"
+	"go-app/domain"
+	"go-app/interactor"
+	"go-app/usecase"
 )
 
 var FactorySingleton *Factory
@@ -47,16 +47,31 @@ func (f *Factory) container(key string, builder func() interface{}) interface{} 
 // BuildCreateUser ユーザー作成UseCaseインスタンスを生成
 func (f *Factory) BuildCreateUser() usecase.ICreateUser {
 	return f.container("CreateUser", func() interface{} {
-		return interactor.NewCreateUser(f.BuildUserOperator())
+		return interactor.NewCreateUser(
+			f.BuildUserOperator(),
+			f.BuildUserEmailUniqChecker())
 	}).(usecase.ICreateUser)
 }
 
+// BuildUserEmailUniqGenerator ユーザーのメールアドレス重複チェック用のレコード生成機のインスタンスを生成
+func (f *Factory) BuildUserEmailUniqGenerator() *adapter.UserEmailUniqGenerator {
+	return f.container("UserEmailUniqGenerator", func() interface{} {
+		return adapter.NewUserEmailUniqGenerator(
+			f.BuildDynamoModelMapper(),
+			f.BuildResourceTableOperator(),
+			f.Envs.DynamoPKName(),
+			f.Envs.DynamoSKName())
+	}).(*adapter.UserEmailUniqGenerator)
+}
+
 // BuildUserOperator ユーザー情報関連の操作を行うインスタンスを生成
+// 実体としてはUserOperatorを返しているが、UserRepositoryとして返している
 func (f *Factory) BuildUserOperator() domain.UserRepository {
 	return f.container("UserOperator", func() interface{} {
 		return &adapter.UserOperator {
 			Client:                 f.BuildResourceTableOperator(),
 			Mapper:                 f.BuildDynamoModelMapper(),
+			UserEmailUniqGenerator: f.BuildUserEmailUniqGenerator(),
 		}
 	}).(domain.UserRepository)
 }
@@ -80,6 +95,13 @@ func (f *Factory) BuildDynamoModelMapper() *adapter.DynamoModelMapper {
 			SKName:    f.Envs.DynamoSKName(),
 		}
 	}).(*adapter.DynamoModelMapper)
+}
+
+// BuildUserEmailUniqChecker ユーザーのメールアドレス重複チェックインスタンスを生成
+func (f *Factory) BuildUserEmailUniqChecker() *domain.UserEmailUniqChecker {
+	return f.container("UserEmailUniqChecker", func() interface{} {
+		return domain.NewUserEmailUniqChecker(f.BuildUserOperator())
+	}).(*domain.UserEmailUniqChecker)
 }
 
 // BuildDynamoClient DynamoDBに接続するためのインスタンスを生成

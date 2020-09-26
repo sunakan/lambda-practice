@@ -13,6 +13,13 @@ type UserResource struct {
 	Mapper *DynamoModelMapper `dynamo:"-"`
 }
 
+func NewUserResource(userModel *domain.UserModel, mapper *DynamoModelMapper) *UserResource {
+	return &UserResource{
+		UserModel: *userModel,
+		Mapper:    mapper,
+	}
+}
+
 // DynamoResourceインタフェースの実装
 
 func (u *UserResource) EntityName() string {

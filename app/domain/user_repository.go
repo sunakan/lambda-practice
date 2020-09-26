@@ -7,5 +7,6 @@ package domain
 type UserRepository interface {
 	CreateUser(newUser *UserModel) (*UserModel, error)
 //	GetUsers() ([]*UserModel, error)
-//	GetUserByID(id uint64) (*UserModel, error)
+	GetUserByID(id uint64) (*UserModel, error)
+	GetUserByEmail(email string) (*UserModel, error)
 }

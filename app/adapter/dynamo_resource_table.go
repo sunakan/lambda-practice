@@ -18,3 +18,5 @@ func NewResourceTableOperator(client *DynamoClient, tableName string) *ResourceT
 func (r *ResourceTableOperator) CreateTableForTest() error {
 	return r.TableOperator.CreateTableForTest(&ResourceSchema{})
 }
+
+

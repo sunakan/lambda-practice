@@ -2,10 +2,14 @@ package adapter
 
 import (
 	"fmt"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/guregu/dynamo"
-	"time"
+	"github.com/memememomo/nomof"
 	"github.com/pkg/errors"
 	"reflect"
+	"strconv"
+	"time"
 )
 
 type DynamoResource interface {
@@ -61,4 +65,81 @@ func (d *DynamoModelMapper) GetPK(resource DynamoResource) string {
 
 func (d *DynamoModelMapper) GetSK(resource DynamoResource) string {
 	return fmt.Sprintf("%011d", resource.ID())
+}
+
+func (d *DynamoModelMapper) BuildQueryCreate(resource DynamoResource) (*dynamo.Put, error) {
+	table, err := d.Client.ConnectTable()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	id, err := d.generateID(resource.EntityName())
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	resource.SetCreatedAt(time.Now())
+	resource.SetUpdatedAt(time.Now())
+	resource.SetID(id)
+	resource.SetVersion(1)
+	resource.SetPK()
+	resource.SetSK()
+
+	fb := nomof.NewBuilder()
+	fb.AttributeNotExists(d.PKName)
+
+	query := table.
+		Put(resource).
+		If(fb.JoinAnd(), fb.Arg...)
+
+	return query, nil
+}
+
+func (d *DynamoModelMapper) generateID(tableName string) (uint64, error) {
+	attr, err := d.atomicCount(fmt.Sprintf("AtomicCounter-%s", tableName), "AtomicCounter", "CurrentNumber", 1)
+	if err != nil {
+		return 0, errors.WithStack(err)
+	}
+
+	nStr := aws.StringValue(attr.N)
+	n, err := strconv.ParseUint(nStr, 10, 64)
+	if err != nil {
+		return 0, errors.WithStack(err)
+	}
+
+	return n, nil
+}
+
+func (d *DynamoModelMapper) atomicCount(pk, sk, counterName string, value int) (*dynamodb.AttributeValue, error) {
+	db, err := d.Client.ConnectDB()
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	output, err := db.Client().UpdateItem(&dynamodb.UpdateItemInput{
+		TableName: aws.String(d.TableName),
+		Key: map[string]*dynamodb.AttributeValue{
+			"PK": {
+				S: aws.String(pk),
+			},
+			"SK": {
+				S: aws.String(sk),
+			},
+		},
+		AttributeUpdates: map[string]*dynamodb.AttributeValueUpdate{
+			counterName: {
+				Action: aws.String("ADD"),
+				Value: &dynamodb.AttributeValue{
+					N: aws.String(fmt.Sprintf("%d", value)),
+				},
+			},
+		},
+		ReturnValues: aws.String(dynamodb.ReturnValueUpdatedNew),
+	})
+
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+
+	return output.Attributes[counterName], nil
 }
