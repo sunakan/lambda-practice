@@ -15,17 +15,18 @@ include makefiles/help.mk
 ################################################################################
 .PHONY: up
 up: ## docker-compose
+	mkdir -p go-pkg
 	docker-compose up
 .PHONY: down
 down: ## docker-compose
 	docker-compose down
 
-#.PHONY: build
-#build: ## docker-compose
-#	docker-compose build
-#.PHONY: bash
-#bash: ## docker-compose
-#	docker-compose run --service-ports go-app
+.PHONY: build
+build: ## docker-compose
+	docker-compose build
+.PHONY: bash
+bash: ## docker-compose
+	docker-compose exec go-app bash
 
 .PHONY: deploy-docs
 deploy-docs: ## ドキュメントをデプロイする
