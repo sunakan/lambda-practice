@@ -24,6 +24,9 @@ services:
         source: ${PWD}/bad-app
         target: /root/app-root/bad-app
       - type: bind
+        source: ${PWD}/good-app
+        target: /root/app-root/good-app
+      - type: bind
         source: ${PWD}/app3
         target: /root/app-root/app3
       - type: bind
