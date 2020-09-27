@@ -21,4 +21,4 @@ RUN apt-get update --assume-yes \
 ################################################################################
 #
 # 上記より、GO111MODULE=on && /${GOPATH}/pkgさえマウント出来たらイイ感じそう
-WORKDIR /root/app/
+WORKDIR /root/app-root
