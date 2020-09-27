@@ -15,6 +15,7 @@ type userService struct {
 	repo repository.UserRepositoryIFace
 }
 
+// この時点ではDynamoDBかはわからない
 func NewUserService(repo repository.UserRepositoryIFace) UserServiceIFace {
     return &userService{repo}
 }

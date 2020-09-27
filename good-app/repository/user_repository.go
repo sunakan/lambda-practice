@@ -15,6 +15,7 @@ type userRepository struct {
 	db dynamo.DB
 }
 
+// dynamoDBもうまくラップできたらいいが、この時点ではRepositoryはDynamoDBと知っている
 func NewUserRepository(db *dynamo.DB) UserRepositoryIFace {
 	return &userRepository{*db}
 }
