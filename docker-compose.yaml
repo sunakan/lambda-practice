@@ -12,10 +12,20 @@ services:
       target: development
     command: bash
     tty: true
+    working_dir: /root/app-root/
     volumes:
       - type: bind
+        source: ${PWD}/app
+        target: /root/app-root/app
+      - type: bind
         source: ${PWD}/app2
-        target: /root/app
+        target: /root/app-root/app2
+      - type: bind
+        source: ${PWD}/bad-app
+        target: /root/app-root/bad-app
+      - type: bind
+        source: ${PWD}/app3
+        target: /root/app-root/app3
       - type: bind
         source: ${PWD}/go-pkg
         target: /go/pkg
