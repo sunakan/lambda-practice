@@ -30,6 +30,9 @@ services:
         source: ${PWD}/app3
         target: /root/app-root/app3
       - type: bind
+        source: ${PWD}/app4
+        target: /root/app-root/app4
+      - type: bind
         source: ${PWD}/go-pkg
         target: /go/pkg
     environment:
