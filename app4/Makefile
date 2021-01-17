@@ -13,5 +13,5 @@ setup:
 
 .PHONY: test
 test:
-	DYNAMO_LOCAL_ENDPOINT=$(DB_LOCAL_ENDPOINT) go test ./adapter/ -v
+	DYNAMO_LOCAL_ENDPOINT=$(DB_LOCAL_ENDPOINT) go test ./adapter/controller -v
 #	DYNAMO_LOCAL_ENDPOINT=$(DB_LOCAL_ENDPOINT) DISABLE_ENV_DECRYPT=1 go test ./adapter/ -v
